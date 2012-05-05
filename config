@@ -1,0 +1,132 @@
+;basic settings
+(global-font-lock-mode 1)
+(setq-default indent-tabs-mode nil) 
+(setq mac-option-modifier 'meta)
+(setq inhibit-startup-message t)
+(setq scroll-step 1)
+(setq scroll-conservatively 1)
+(setq-default scroll-step 1)
+(setq-default cursor-type '(bar . 1))
+(setq-default transient-mark-mode t)
+
+;helper function
+(defun prepend-path ( my-path )
+       (setq load-path (cons (expand-file-name my-path) load-path)))
+
+;column markers
+(prepend-path "~/.emacs.d/cmarker")
+(require 'column-marker)
+(add-hook 'java-mode-hook (lambda () (interactive) (column-marker-1 80)))
+(add-hook 'c-mode-hook (lambda () (interactive) (column-marker-1 80)))
+(add-hook 'c++-mode-hook (lambda () (interactive) (column-marker-1 80)))
+(add-hook 'python-mode-hook (lambda () (interactive) (column-marker-1 80)))
+
+;; Bind hippie-expand
+(global-set-key [(meta f1)] (make-hippie-expand-function
+                             '(try-expand-dabbrev-visible
+                               try-expand-dabbrev
+                               try-expand-dabbrev-all-buffers) t))
+
+;yasnippet 
+(prepend-path
+             "~/.emacs.d/plugins/yasnippet-0.6.1c")
+(require 'yasnippet)
+(setq yas/trigger-key (kbd "C-c C-y"))
+(yas/initialize)
+(yas/load-directory "~/.emacs.d/plugins/yasnippet-0.6.1c/snippets")
+(global-set-key "\C-o" 'yas/insert-snippet)
+
+;auto-complete 
+(prepend-path "~/.emacs.d/autocomplete")
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/autocomplete/dict")
+(ac-config-default)
+
+;cedet & ecb
+(load-file "~/.emacs.d/cedet-1.0/common/cedet.el")
+(global-ede-mode 1)
+(semantic-load-enable-gaudy-code-helpers)
+(prepend-path "~/.emacs.d/ecb-snap")
+(require 'ecb)
+
+;color theme
+(prepend-path "~/.emacs.d/color-theme")
+(color-theme-initialize)
+(color-theme-tango)
+
+
+;flymake-cursor
+(prepend-path "~/.emacs.d/flymakecursor")
+(require 'flymake-cursor)
+;add the following to Makefiles for flymake (after defining appropriate vars)
+;.PHONY: check-syntax
+;check-syntax:
+;	$(CXX) -Wall -Wextra -pedantic -fsyntax-only $(CHK_SOURCES)
+
+
+; Python mode
+(prepend-path "~/.emacs.d/pythonmode")
+(setq py-install-directory "~/.emacs.d/pythonmode")
+(autoload 'python-mode "python-mode" "Python mode" t )
+(setq auto-mode-alist (cons  '("\\.py\\'" . python-mode) auto-mode-alist))
+(add-hook 'python-mode-hook '(lambda () (font-lock-mode 1)))
+
+;slime+sbcl
+;(prepend-path "~/.emacs.d/slime/")
+;(setq inferior-lisp-program "/opt/local/bin/sbcl")
+;(require 'slime)
+;(slime-setup)
+
+;tcl
+(prepend-path "~/.emacs.d/tcl")
+(require 'tcl-font)
+
+;ruby
+(prepend-path "~/.emacs.d/ruby-mode/")
+(autoload 'ruby-mode "ruby-mode" "Major mode for editing ruby scripts." t)
+(setq auto-mode-alist  (cons '(".rb$" . ruby-mode) auto-mode-alist))
+(setq auto-mode-alist  (cons '(".rhtml$" . html-mode) auto-mode-alist))
+
+;erlang
+;(setq load-path (cons  "/usr/local/lib/erlang/lib/tools-2.6.7/emacs"
+;                       load-path))
+;(setq erlang-root-dir "/usr/local/lib/erlang")
+;(setq exec-path (cons "/usr/local/lib/erlang/bin" exec-path))
+;(require 'erlang-start)
+
+;haskell
+(load "~/.emacs.d/haskell-mode/haskell-site-file")
+(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+
+;key mappings
+(global-set-key "\C-m" 'newline-and-indent)
+(global-set-key "\C-x\C-m" 'execute-extended-command)
+(global-set-key "\C-w" 'backward-kill-word)
+(global-set-key "\C-x\C-k" 'kill-region)
+(global-set-key "\C-c\C-k" 'kill-region)
+(global-set-key "\C-z" 'undo)
+(global-set-key [ (control c) (control g) ] 'goto-line)
+
+(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+
+(defalias 'qrr 'query-replace-regexp)
+
+;; indent the entire buffer
+(defun c-indent-buffer ()
+  "Indent entire buffer of C source code."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (while (< (point) (point-max))
+      (c-indent-command)
+      (end-of-line)
+      (forward-char 1))))
+
+
+;;disable autosave/backup files
+(setq backup-inhibited t)
+(setq auto-save-default nil)
+

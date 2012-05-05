@@ -1,1 +1,4 @@
 My emacs config.
+
+Place everything here in ~/.emacs.d/
+Make a symlink to the config file, e.g., ln -s ~/.emacs.d/config ~/.emacs
